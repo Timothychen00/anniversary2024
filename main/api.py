@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import request,jsonify
 from icecream import ic
+import json
 from main.models import db_model,Customers
 
 class customer_manage(Resource):
@@ -11,11 +12,15 @@ class customer_manage(Resource):
         
         key=data.get('key',None)
         value=data.get('value',None)
-        ambiguous=data.get('ambiguous',None)
+        ambiguous=int(data.get('ambiguous',1))
+        mask=data.get('mask',None)
+        if mask:
+            mask=list(map(str,mask.split(',')))
+        ic(mask)
         
         ic({key:value})
         ic(ambiguous)
-        result=Customers.search({key:value},ambiguous)
+        result=Customers.search({key:value},ambiguous,mask)
         return result,200
     
     def post(self):

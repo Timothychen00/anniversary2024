@@ -35,7 +35,7 @@
             button2=document.getElementById('button2');
             button2.addEventListener('click',()=>{
                 console.log('sedn')
-                fetch('/api/customers?'+new URLSearchParams({"key":'_id','value':1,'ambiguous':"1"}),{method:'get',headers:{ 'Content-Type': 'application/json' }})
+                fetch('/api/customers?'+new URLSearchParams({"key":'_id','value':1,'ambiguous':0,'mask':['_id','table_num']}),{method:'get',headers:{ 'Content-Type': 'application/json' }})
                 .then(res=>(res.json()))
                 .then(res=>console.log(res))
             })
