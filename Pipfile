@@ -11,6 +11,7 @@ icecream = "*"
 pandas = "*"
 python-dotenv = "*"
 pymongo = "*"
+openpyxl = "*"
 
 [dev-packages]
 
