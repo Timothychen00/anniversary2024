@@ -6,6 +6,7 @@ import pandas as pd
 import datetime,sys
 from icecream import ic
 from werkzeug.security import generate_password_hash,check_password_hash
+from main.dataformat import Customer_Data
 datetime.timezone(datetime.timedelta(hours=8))
 
 def timestamp():
@@ -62,7 +63,7 @@ class DB():
         ic(dataframe.columns)
         ic(len(dataframe))
         length=len(dataframe)
-        labels = {'流水號':('_id',str) ,'姓名':('name',str),'畢業年':('year',str),'素食':('eat',str),'桌次':('table_num',int) ,'桌名':('table_name',str),'桌長':('table_owner',str),'備註':('note',str),'出席':('present',str),'身分':('type',str)}
+        labels = {'流水號':('_id',str) ,'姓名':('name',str),'畢業年':('year',str),'素食':('eat',str),'桌次':('table_num',str) ,'桌名':('table_name',str),'桌長':('table_owner',str),'備註':('note',str),'出席':('present',str),'身分':('type',str)}
 
         for row in range(length):
             ic(type(dataframe.iloc[row]))
@@ -132,18 +133,25 @@ class Customers():
             'eat':'',
             'table_num':"",
             'tag':[0],
-            'donate':0,
-            'type':'vip',
+            'donate':'',
+            'type':'normal',
             'table_owner':"",
             'present':"",
             'table_name':"",
             'note':''
         }
+
         if not data:
             return "data input is empty!",'ERR'
 
-        for i in data:
-            template[i]=data[i]
+        for i in template:#only fill acccept data
+            try:
+                if i in data:
+                    if data[i]:
+                        template[i]=Customer_Data[i](data[i])
+            except:
+                return f"type not ",'ERR'
+            
         ic(template)
         
         for i in template:
@@ -162,18 +170,36 @@ class Customers():
         return "success",'SUCCESS'
     
     def search(filter,ambiguous=True,mask=None):
+        key=(list(filter.keys())[0])
         if ambiguous:
             if filter:
                 ic(filter)
-                key=(list(filter.keys())[0])
                 filter={key:{'$regex':".*"+filter[key]+'.*'}}
         result=db_model.collection.find(filter)
         result=list(result)
         
+        ic(result)
         if mask:
             result=[{i:doc[i] for i in mask} for doc in result]
         ic(result)
         return result,'SUCCESS'
+    
+    def edit(filter,set_data):
+        '''for not ambiguous only!'''
+        if not filter or not set_data:
+            return "filter or set_data is empty!","ERR"
+        
+        result_count=len(list(db_model.collection.find(filter)))
+        ic(result_count)
+        if result_count==0:
+            return 'Document not found!','ERR'
+        elif result_count>1:
+            return 'Too many results!','ERR'
+        else:
+            result=db_model.collection.update_one(filter,{"$set":set_data})
+            ic(result)
+            return 'edit','SUCCESS'
+            
         
         
 class Employee():
@@ -186,16 +212,28 @@ class Employee():
         if result:
             if check_password_hash(result['password'],password):
                 self.start_session(username)
+                ic('login success')
+                return "login success",'SUCCESS'
             else:
-                return {"password":"密碼錯誤"}
+                ic('not correct password')
+                return "password check failed",'ERR'
         else:
-            return {'username':"帳號不存在"}
+            ic('no employee')
+            return "no employee",'ERR'
 
     def logout(self):
         if 'logged_in' in session:
             del session['logged_in']
         if 'username' in session:
             del session['username']
+            
+        ic('logout success')
     
     def register(self,username,password):#only for back-end change
-        db_model.employees.insert_one({'username':str(username),'password':generate_password_hash(password)})
+        username=str(username)
+        result=list(db_model.employees.find({'username':username}))
+        if len(result)>0:
+            return 'username existed!','ERR'
+
+        db_model.employees.insert_one({'username':username,'password':generate_password_hash(password)})
+        return 'register success','SUCCESS'
