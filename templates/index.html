@@ -25,7 +25,7 @@
 
                     <div class="d-flex justify-content-between align-items-center">
 
-                        <span class="font-weight-bold fs-3">自助報到系統</span>
+                        <span class="font-weight-bold fs-3" style="font-size: 35px !important;">自助報到系統</span>
 
                         <div class="d-flex flex-row">
 
@@ -38,10 +38,14 @@
 
                     <div class="mt-4 inputs d-inline-flex">
                         <i class="fa fa-search"></i>
-                        <input type="text" class="form-control" id="search_input" placeholder="請輸入 姓名 或 桌長 或 桌號...">
+                        <input type="text" class="form-control" id="search_input" style="font-size: 20px !important;"
+                            placeholder="請輸入 姓名 或 桌長 或 桌號">
                         <button class="btn btn-warning text-white" style="min-width: 70px;">搜尋</button>
                     </div>
-
+                    <div id="predict" class="mt-2" style="display: none;">
+                        <b class="ms-2 mt-1">您可能會想搜尋</b><br>
+                        <div id="predict_result"></div>
+                    </div>
                     <div id="result"></div>
                     <!-- <div class="mt-3">
 

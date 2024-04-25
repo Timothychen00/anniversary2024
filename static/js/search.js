@@ -1,92 +1,147 @@
 const searchElement = document.getElementById("search_input");
 var circle_position = {
-    1: { x: 11, y: 91 },
-    2: { x: 11, y: 139 },
-    3: { x: 11, y: 188 },
-    5: { x: 11, y: 237 },
-    6: { x: 11, y: 286 },
-    7: { x: 58, y: 115 },
-    8: { x: 58, y: 164 },
-    9: { x: 58, y: 213 },
-    10: { x: 58, y: 262 },
-    11: { x: 105, y: 142 },
-    12: { x: 105, y: 191 },
-    15: { x: 105, y: 240 },
-    16: { x: 105, y: 289 },
-    17: { x: 156, y: 164 },
-    18: { x: 156, y: 213 },
-    19: { x: 156, y: 262 },
-    20: { x: 207, y: 141 },
-    21: { x: 207, y: 190 },
-    22: { x: 207, y: 239 },
-    23: { x: 207, y: 288 },
-    25: { x: 254, y: 119 },
-    26: { x: 254, y: 168 },
-    27: { x: 254, y: 217 },
-    28: { x: 254, y: 266 },
-    29: { x: 303, y: 96 },
-    30: { x: 303, y: 144 },
-    31: { x: 302, y: 194 },
-    32: { x: 302, y: 242 },
-    33: { x: 302, y: 291 },
+    1: { x: 5, y: 80 },
+    2: { x: 5, y: 131 },
+    3: { x: 5, y: 180 },
+    5: { x: 5, y: 230 },
+    6: { x: 5, y: 282 },
+    7: { x: 52, y: 106 },
+    8: { x: 52, y: 156 },
+    9: { x: 52, y: 206 },
+    10: { x: 52, y: 256 },
+    11: { x: 99, y: 134 },
+    12: { x: 99, y: 183 },
+    15: { x: 99, y: 233 },
+    16: { x: 100, y: 283 },
+    17: { x: 152, y: 156 },
+    18: { x: 152, y: 206 },
+    19: { x: 152, y: 255 },
+    20: { x: 204, y: 132 },
+    21: { x: 204, y: 182 },
+    22: { x: 204, y: 231 },
+    23: { x: 204, y: 282 },
+    25: { x: 252, y: 110 },
+    26: { x: 252, y: 160 },
+    27: { x: 252, y: 210 },
+    28: { x: 252, y: 260 },
+    29: { x: 300, y: 86 },
+    30: { x: 300, y: 134 },
+    31: { x: 300, y: 185 },
+    32: { x: 300, y: 235 },
+    33: { x: 300, y: 286 },
 };
 
-function fetchSearchResult(key, value ,ambiguous) {
+let resultList = [];
+function fetchSearchResult(key, value, ambiguous) {
+    if (value === "") {
+        const resultDiv = document.getElementById("result");
+        resultDiv.innerHTML = "";
+        return;
+    }
     return fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
         .then(response => response.json())
         .then(data => {
-            console.log(data);
+            let predictresult = document.getElementById("predict_result");
+            let predict = document.getElementById("predict");
+            let resultDiv = document.getElementById("result");
+            // resultDiv.innerHTML = "";
+            predictresult.innerHTML = "";
+            predict.style.display = "none";
+            resultList = [];
+            // console.log(data[0]);
             if (data[0].length > 0) {
-                search_result = data[0][0];
-                const resultDiv = document.getElementById("result");
-                resultDiv.innerHTML = "";
-                const newDiv = document.createElement("div");
-                newDiv.classList.add("mt-3");
-                // Rest of the code...
-                newDiv.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex flex-row align-items-center">
-                    <ion-icon name="information-circle" class="m-3" size="large" style="color: rgb(226, 135, 7);"></ion-icon>
-                    <div class="d-flex flex-column">
-                        <b>搜尋結果</b>
-                        <div class="d-flex flex-row align-items-center time-text">
-                            <b style="font-size:17px!important;font-weight:400;">桌號 : `+ search_result.table_num + `</b>
-                            <span class="dots"></span>
-                            <b style="font-size:17px!important;font-weight:400;">桌長 : `+ search_result.table_owner + ` </b>
-                            <span class="dots"></span>
-                            <b style="font-size:17px!important;font-weight:400;">畢業年 : `+ search_result.year + ` </b>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-                const tableImage = document.createElement("img");
-                tableImage.id = "LiuYiFeiImg";
-                tableImage.src = "/static/img/table.png";
-                tableImage.alt = "table";
-                tableImage.style.width = "350px";
-                tableImage.style.height = "350px";
-                tableImage.style.display = "block";
-                tableImage.style.margin = "0 auto";
-                const imageDiv = document.createElement("div");
-                imageDiv.appendChild(tableImage);
-                imageDiv.id = "table_image";
-                imageDiv.classList.add("img");
-                newDiv.appendChild(imageDiv);
-                resultDiv.appendChild(newDiv);
-                function createMarker(x, y, divName) {
-                    var div = document.createElement('div');
-                    div.className = 'marker animate__animated animate__flash'; div.style.left = x + 'px'; div.style.top = y + 'px';
-                    document.getElementById(divName).appendChild(div)
+
+                for (let i = 0; i < data[0].length; i++) {
+                    let result = data[0][i];
+                    if (!resultList.some(item => item.key === key && item.value === result[key])) {
+                        resultList.push({ key: key, value: result[key] });
+                    }
                 }
-                createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y, 'table_image')
+                // Use the key and value as needed
+                console.log(resultList);
+                if (resultList.length > 1) {
+                    let predict = document.getElementById("predict");
+                    predict.style.display = "block";
+                    predictresult.innerHTML = "";
+                    for (let i = 0; i < resultList.length; i++) {
+                        let title;
+                        if (resultList[i].key === 'table_num') {
+                            title = "桌號";
+                        }
+                        else if (resultList[i].key === 'table_owner') {
+                            title = "桌長";
+                        }
+                        else if (resultList[i].key === 'name') {
+                            title = "貴賓";
+                        }
+                        predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}', '${resultList[i].value}', '0')"> ${title} : ${resultList[i].value}</button>`;
+                    }
+                }
+                else if (resultList.length === 1) {
+
+                    search_input.value = value;
+                    search_result = data[0][0];
+                    let resultDiv = document.getElementById("result");
+                    resultDiv.innerHTML = "";
+                    let newDiv = document.createElement("div");
+                    newDiv.classList.add("mt-3");
+                    // Rest of the code...
+                    newDiv.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <div class="d-flex flex-row align-items-center">
+                                <ion-icon name="information-circle" class="m-3" size="large" style="color: rgb(226, 135, 7);"></ion-icon>
+                                <div class="d-flex flex-column">
+                                    <b style="font-size:15px!important;">搜尋結果</b>
+                                    <div class="flex-row align-items-center time-text mt-2">
+                                        
+                                        <h5 style="font-size:25px!important;font-weight:400;">桌號 : `+ search_result.table_num + `</h5><br>
+                                        
+                                        <h5 style="font-size:25px!important;font-weight:400;">桌長 : `+ search_result.table_owner + ` </h5><br>
+                                        
+                                        <h5 style="font-size:25px!important;font-weight:400;">畢業年 : `+ search_result.year + ` </h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    const tableImage = document.createElement("img");
+                    tableImage.id = "LiuYiFeiImg";
+                    tableImage.src = "/static/img/table.png";
+                    tableImage.alt = "table";
+                    tableImage.style.width = "350px";
+                    tableImage.style.height = "350px";
+                    tableImage.style.display = "block";
+                    tableImage.style.margin = "0 auto";
+                    const imageDiv = document.createElement("div");
+                    imageDiv.appendChild(tableImage);
+                    imageDiv.id = "table_image";
+                    imageDiv.classList.add("img");
+                    newDiv.appendChild(imageDiv);
+                    resultDiv.appendChild(newDiv);
+                    function createMarker(x, y, divName) {
+                        var div = document.createElement('div');
+                        div.className = 'marker animate__animated animate__flash animate__infinite'; div.style.left = x + 'px'; div.style.top = y + 'px';
+                        document.getElementById(divName).appendChild(div)
+
+
+                    }
+                    createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y, 'table_image')
+                }
             }
-})
+            // else {
+            //     predict = document.getElementById("predict");
+            //     predict.style.display = "none";
+            //     resultDiv = document.getElementById("result");
+            //     resultDiv.innerHTML = '<h3 class="text-center text-danger mt-5 mb-5 ">查無資料</h3>';
+            // }
+        })
 };
 
 
 
-searchElement.addEventListener("change", (event) => {
-    fetchSearchResult('table_num', searchElement.value,0);
-    fetchSearchResult('table_owner', searchElement.value,1);
-    fetchSearchResult('name', searchElement.value,1);
+searchElement.addEventListener("input", (event) => {
+    resultList = [];
+    fetchSearchResult('table_num', searchElement.value, 0);
+    fetchSearchResult('table_owner', searchElement.value, 1);
+    fetchSearchResult('name', searchElement.value, 1);
+
 });
