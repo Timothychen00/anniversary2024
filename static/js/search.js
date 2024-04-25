@@ -29,6 +29,7 @@ var circle_position = {
     31: { x: 300, y: 185 },
     32: { x: 300, y: 235 },
     33: { x: 300, y: 286 },
+    "主桌": { x: 152, y: 91 }
 };
 
 let resultList = [];
