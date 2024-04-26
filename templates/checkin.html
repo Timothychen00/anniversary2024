@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>功能頁面</title>
+    <title>貴賓簽到頁面</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -18,26 +18,38 @@
 <body>
     <div class="container-fluid">
         <div class="row mt-5 text-center">
-            <h2>頒獎系統</h2>
+            <h2>貴賓報到系統</h2>
         </div>
-        <div class="row mt-3 mx-auto middle-board">
-            <h5 class="m-2 mt-3" style="color:#df5334;">功能選單</h5>
+        <div class="row mt-3 mx-auto middle-board2">
+            <h5 class="m-2 mt-3" style="color:#07a511;">請選擇報到人</h5>
             <div class="">
-                <div class="row justify-content-center">
-                    <input type="submit" onclick="location.href='/checkin'" value="貴賓報到" class="submit mt-5">
+                <b class="mt-2 mb-2 ms-5 ps-2">報到人資料</b>
+                <div class="col mb-3 ms-3 mt-1 text-center">
+                    <input type="text" class="form-control mx-auto" style="max-width: 230px;" id="checkin_name_input"
+                        name="name" placeholder="請輸入姓名" required>
+                </div>
+                <div id="predict" class="mt-2 overflow-auto text-center mb-3" style="display: none; height:150px">
+                    <b class="ms-2 mt-1">您可能會想搜尋</b><br>
+                    <div id="predict_result" class="text-center"></div>
+                </div>
+                <b class="mt-2 mb-1 ms-5 ps-2">報到選項</b>
+                <div class="col mb-2 ms-3 mt-1">
+                    <select class="form-select mx-auto select_style" style="width:230px" aria-label="Default select example"
+                        id="checkin_mode">
+                        <option selected value="checkin">報到</option>
+                        <option value="cancel">取消報到</option>
+                    </select>
                 </div>
                 <div class="row justify-content-center">
-                    <input type="submit" onclick="location.href='/donate'" value="捐款回報" class="submit mt-5">
-                </div>
-                <div class="row justify-content-center">
-                    <input type="submit" onclick="location.href='/reward'" value="頒獎列表" class="submit mt-5">
+                    <input type="submit" id="checkin_btn" value="確認報到" class="submit2 mt-5">
                 </div>
 
             </div>
             <!-- </div> -->
             <div class="d-flex mt-5 justify-content-center px-5 mb-3">
-                <a class="h6 flex" onclick="location.href='/'">貴賓查詢</a>
-                <a class="h6 flex ms-3" onclick="location.href='/logout'">點擊登出</a>
+                <a class="h6 flex" onclick="location.href='/checkin'">貴賓報到</a>
+                <a class="h6 flex mx-auto" onclick="location.href='/reward'">頒獎名單</a>
+                <a class="h6 flex" onclick="location.href='/donate'">捐款頁面</a>
             </div>
         </div>
         <!-- <div class="d-flex justify-content-center" style="margin-top: -40px;"> -->
@@ -60,7 +72,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"
         integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF"
         crossorigin="anonymous"></script>
-    <script src="/static/js/donate.js"></script>
+    <script src="/static/js/checkin.js"></script>
 </body>
 
 </html>

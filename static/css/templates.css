@@ -44,7 +44,7 @@ body {
 
 }
 
-.form-control {
+.my-form-control {
     text-indent: 15px;
     border: none;
     height: 45px;
@@ -52,7 +52,7 @@ body {
     border-bottom: 1px solid #eee;
 }
 
-.form-control:focus {
+.my-form-control:focus {
     color: #495057;
     background-color: #fff;
     border-color: #eee;
@@ -62,7 +62,7 @@ body {
 }
 
 
-.form-control:focus {
+.my-form-control:focus {
     color: blue;
 }
 
@@ -173,10 +173,132 @@ body {
 
 .img .marker {
     position: absolute;
-    width: 40px;
-    height: 40px;
-    border-radius: 999em;
-    background: rgb(255, 234, 0);
-    opacity: 0.5;
-    
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 8px solid rgb(252, 5, 5);
+    background-color: transparent;
+}
+
+.order-card {
+    color: #fff;
+}
+
+.bg-c-blue {
+    background: linear-gradient(45deg, #4099ff, #73b4ff);
+}
+
+.bg-c-green {
+    background: linear-gradient(45deg, #2ed8b6, #59e0c5);
+}
+
+.bg-c-yellow {
+    background: linear-gradient(45deg, #FFB64D, #ffcb80);
+}
+
+.bg-c-pink {
+    background: linear-gradient(45deg, #FF5370, #ff869a);
+}
+
+
+.card {
+    border-radius: 5px;
+    -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+    box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
+    border: none;
+    margin-bottom: 5px;
+    -webkit-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.card .card-block {
+    padding: 0px;
+}
+
+.order-card i {
+    font-size: 30px;
+}
+
+body {
+    background-color: white;
+}
+
+.middle-board {
+    max-width: 350px;
+    min-height: 500px;
+    border-radius: 0.5rem;
+    background-color: white;
+    border-top: 15px solid #df5334;
+    box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
+
+}
+
+.middle-board2 {
+    max-width: 350px;
+    min-height: 500px;
+    border-radius: 0.5rem;
+    background-color: white;
+    border-top: 15px solid #07a511;
+    box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
+}
+
+.middle-board3 {
+    max-width: 700px;
+    min-height: 600px;
+    border-radius: 0.5rem;
+    background-color: white;
+    border-top: 15px solid #07a511;
+    box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
+}
+
+input {
+    width: 230px;
+    border-style: solid;
+    height: 50px;
+}
+
+.style1 {
+    border-radius: 5px;
+    color: #df5334;
+}
+
+#style2 {
+    border-radius: 5px;
+    color: #07a511;
+}
+
+.submit {
+    border-radius: 0.5rem;
+    width: 230px;
+    color: white;
+    background-color: #df5334;
+}
+
+.submit2 {
+    border-radius: 0.5rem;
+    width: 230px;
+    color: white;
+    background-color: #07a511;
+}
+
+
+
+.h6 {
+    text-decoration: none;
+    color: darkgray
+}
+
+.h6:hover {
+    text-decoration: none;
+    color: gray;
+    font-size: 17px;
+}
+
+.price {
+    max-width: 50px;
+
+}
+
+.select_style {
+    height: 50px;
 }

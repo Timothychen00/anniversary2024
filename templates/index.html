@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>自助報到系統</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
@@ -17,15 +17,19 @@
 
 <body>
 
-    <div class="container-fluid">
-        <div class="row mt-md-5 justify-content-center mt-md-0 mt-3">
+    <div class="container-fluid justify-content-center">
+        <div class="row">
+            <img src="/static/img/logo.png" alt="" class="img-fluid mx-auto mt-3" style="max-width: 280px;">
+        </div>
+        <div class="row mt-md-3 justify-content-center mt-md-0 mt-3">
             <div class="col-md-6">
 
                 <div class="card">
 
                     <div class="d-flex justify-content-between align-items-center">
 
-                        <span class="font-weight-bold fs-3">自助報到系統</span>
+                        <span class="font-weight-bold fs-3"
+                            style="font-size: 30px !important; font-weight:700;">自助報到系統</span>
 
                         <div class="d-flex flex-row">
 
@@ -38,10 +42,14 @@
 
                     <div class="mt-4 inputs d-inline-flex">
                         <i class="fa fa-search"></i>
-                        <input type="text" class="form-control" id="search_input" placeholder="請輸入 姓名 或 桌長 或 桌號...">
+                        <input type="text" class="my-form-control form-control" id="search_input"
+                            style="font-size: 17px !important;" placeholder="請輸入 姓名 或 桌長 或 桌號">
                         <button class="btn btn-warning text-white" style="min-width: 70px;">搜尋</button>
                     </div>
-
+                    <div id="predict" class="mt-2" style="display: none;">
+                        <b class="ms-2 mt-1">您可能會想搜尋</b><br>
+                        <div id="predict_result" class="text-center"></div>
+                    </div>
                     <div id="result"></div>
                     <!-- <div class="mt-3">
 

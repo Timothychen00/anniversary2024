@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import pandas as pd
 import datetime,sys
 from icecream import ic
-from werkzeug.security import generate_password_hash,check_password_hash
 from main.dataformat import Customer_Data
 datetime.timezone(datetime.timedelta(hours=8))
 
@@ -210,7 +209,8 @@ class Employee():
     def login(self,username,password):
         result=db_model.employees.find_one({'username':username})
         if result:
-            if check_password_hash(result['password'],password):
+            # if check_password_hash(result['password'],password):
+            if result['password']==password:
                 self.start_session(username)
                 ic('login success')
                 return "login success",'SUCCESS'
@@ -235,5 +235,5 @@ class Employee():
         if len(result)>0:
             return 'username existed!','ERR'
 
-        db_model.employees.insert_one({'username':username,'password':generate_password_hash(password)})
+        db_model.employees.insert_one({'username':username,'password':password})
         return 'register success','SUCCESS'
