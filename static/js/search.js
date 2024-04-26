@@ -168,10 +168,10 @@ searchElement.addEventListener("input", (event) => {
         fetchSearchResult('table_owner', searchElement.value, 1);
         fetchSearchResult('name', searchElement.value, 1);
     }
-    if (searchElement.value === "") {
-        let predictresult = document.getElementById("predict_result");
-        let predict = document.getElementById("predict");
-        predictresult.innerHTML = "";
-        predict.style.display = "none";
-    }
+    // if (searchElement.value === "") {
+    //     let predictresult = document.getElementById("predict_result");
+    //     let predict = document.getElementById("predict");
+    //     predictresult.innerHTML = "";
+    //     predict.style.display = "none";
+    // }
 });
