@@ -7,7 +7,7 @@ from main.models import db_model,Customers
 
 class customer_manage(Resource):
     def get(self):
-        ic(dict(request.args))
+        # ic(dict(request.args))
         
         data=dict(request.args)
         
