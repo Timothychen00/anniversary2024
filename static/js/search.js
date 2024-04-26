@@ -34,9 +34,11 @@ var circle_position = {
 
 let resultList = [];
 function fetchSearchResult(key, value, ambiguous) {
-    if (value === "") {
-        const resultDiv = document.getElementById("result");
-        resultDiv.innerHTML = "";
+    if (value === "" || value === " ") {
+        let predictresult = document.getElementById("predict_result");
+        let predict = document.getElementById("predict");
+        predictresult.innerHTML = "";
+        predict.style.display = "none";
         return;
     }
     return fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
@@ -79,8 +81,18 @@ function fetchSearchResult(key, value, ambiguous) {
                     }
                 }
                 else if (resultList.length === 1) {
+                    console.log(resultList[0].value)
 
-                    search_input.value = value;
+                    document.getElementById("search_input").value
+                    if (window)
+                        document.getElementById("search_input").value = resultList[0].value;
+                    window.last_length = resultList[0].value.length;
+
+
+                    // search_input.value = value;
+
+
+
                     search_result = data[0][0];
                     let resultDiv = document.getElementById("result");
                     resultDiv.innerHTML = "";
@@ -88,18 +100,28 @@ function fetchSearchResult(key, value, ambiguous) {
                     newDiv.classList.add("mt-3");
                     // Rest of the code...
                     newDiv.innerHTML = `
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <div class="d-flex flex-row align-items-center">
-                                <ion-icon name="information-circle" class="m-3" size="large" style="color: rgb(226, 135, 7);"></ion-icon>
-                                <div class="d-flex flex-column">
-                                    <b style="font-size:15px!important;">搜尋結果</b>
-                                    <div class="flex-row align-items-center time-text mt-2">
-                                        
-                                        <h5 style="font-size:25px!important;font-weight:400;">桌號 : `+ search_result.table_num + `</h5><br>
-                                        
-                                        <h5 style="font-size:25px!important;font-weight:400;">桌長 : `+ search_result.table_owner + ` </h5><br>
-                                        
-                                        <h5 style="font-size:25px!important;font-weight:400;">畢業年 : `+ search_result.year + ` </h5>
+                        <div class="d-${window.innerWidth <= 768 ? 'flex' : ''} justify-content-between align-items-center mb-3">
+                            <div class="row align-items-center">
+                                <div class="">
+                                    <div class="row align-items-center time-text mt-2 mx-auto">
+                                        <div class="card bg-c-blue order-card col mb-1" style="max-height:100px;min-width:70px !important;">
+                                            <div class="card-block ">
+                                                <h6 style="font-size:14px">桌號</h6>
+                                                <h2 class="text-right"><span>`+ search_result.table_num + `</span></h2>
+                                            </div>
+                                        </div>
+                                        <div class="card bg-c-green order-card col ms-md-3 ms-2" style="max-height:100px;min-width:135px !important;">
+                                            <div class="card-block">
+                                                <h6 class="">桌長</h6>
+                                                <h2 class="text-right"><span>`+ search_result.table_owner + `</span></h2>
+                                            </div>
+                                        </div>
+                                        <div class="card bg-c-yellow order-card  col ms-md-3 ms-2"  style="max-height:100px;min-width:105px !important;">
+                                            <div class="card-block">
+                                                <h6 class="">畢業年</h6>
+                                                <h2 class="text-right"><span>`+ search_result.year + `</span></h2>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -140,9 +162,16 @@ function fetchSearchResult(key, value, ambiguous) {
 
 
 searchElement.addEventListener("input", (event) => {
-    resultList = [];
-    fetchSearchResult('table_num', searchElement.value, 0);
-    fetchSearchResult('table_owner', searchElement.value, 1);
-    fetchSearchResult('name', searchElement.value, 1);
-
+    if (event.inputType != 'deleteContentBackward') {
+        resultList = [];
+        fetchSearchResult('table_num', searchElement.value, 0);
+        fetchSearchResult('table_owner', searchElement.value, 1);
+        fetchSearchResult('name', searchElement.value, 1);
+    }
+    if (searchElement.value === "") {
+        let predictresult = document.getElementById("predict_result");
+        let predict = document.getElementById("predict");
+        predictresult.innerHTML = "";
+        predict.style.display = "none";
+    }
 });
