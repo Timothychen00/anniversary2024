@@ -11,9 +11,10 @@ api = Api(app)
 # app.register_blueprint(app_route)
 
 api.add_resource(customer_manage,'/api/customers')
-
+print('\n\n\n\nbefore_first_request!!!!!\n\n\n\n')
 app.secret_key = 'os.environ.get("SECRET") or os.urandom(24)'
 
+    # app.register_blueprint(app_route)
 
 app.register_blueprint(app_route)
 @app.route('/')
