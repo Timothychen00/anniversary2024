@@ -42,7 +42,7 @@ function fetchSearchResult(key, value, ambiguous) {
         return;
     }
     return fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
-        .then(response => {console.log(response);response.json()})
+        .then(response => {console.log(response);return response.json()})
         .then(data => {
             let predictresult = document.getElementById("predict_result");
             let predict = document.getElementById("predict");
