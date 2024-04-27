@@ -19,7 +19,7 @@ class customer_manage(Resource):
             mask=list(map(str,mask.split(',')))
         # ic(mask)
         # 
-        ic({key:value})
+        # ic({key:value})
         # ic(ambiguous)
         result=Customers.search({key:value},ambiguous,mask)
         return result,200
