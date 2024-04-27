@@ -1,5 +1,6 @@
 const checkin_name_inputElement = document.getElementById("checkin_name_input");
 let select_status = 0;
+let resultList = [];
 checkin_name_inputElement.addEventListener("input", (event) => {
     console.log(event);
     if (event.inputType != 'deleteContentBackward') {
@@ -13,6 +14,7 @@ checkin_name_inputElement.addEventListener("input", (event) => {
         predictresult.innerHTML = "";
         predict.style.display = "none";
     }
+    resultList = [];
 });
 
 (id, type) => {
@@ -21,7 +23,7 @@ checkin_name_inputElement.addEventListener("input", (event) => {
 }
 
 
-let resultList = [];
+
 function fetchSearchResult(key, value, ambiguous) {
     if (value === "" || value === " ") {
         let predictresult = document.getElementById("predict_result");
@@ -37,7 +39,7 @@ function fetchSearchResult(key, value, ambiguous) {
             let predict = document.getElementById("predict");
             predictresult.innerHTML = "";
             predict.style.display = "none";
-            resultList = [];
+            // resultList = [];
             // console.log(data[0]);
             if (data[0].length > 0) {
                 for (let i = 0; i < data[0].length; i++) {
