@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import datetime,sys
 from icecream import ic
+from main.decorators import timeit
 from main.dataformat import Customer_Data
 datetime.timezone(datetime.timedelta(hours=8))
 
@@ -168,6 +169,7 @@ class Customers():
         db_model.collection.delete_one(filter)
         return "success",'SUCCESS'
     
+    @timeit
     def search(filter,ambiguous=True,mask=None):
         key=(list(filter.keys())[0])
         if ambiguous:

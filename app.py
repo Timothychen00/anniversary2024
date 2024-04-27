@@ -14,6 +14,7 @@ api.add_resource(customer_manage,'/api/customers')
 
 app.secret_key = 'os.environ.get("SECRET") or os.urandom(24)'
 
+
 app.register_blueprint(app_route)
 @app.route('/')
 def home():
