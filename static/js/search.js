@@ -165,8 +165,16 @@ searchElement.addEventListener("input", (event) => {
     if (event.inputType != 'deleteContentBackward') {
         resultList = [];
         fetchSearchResult('table_num', searchElement.value, 0);
+        syncDelay(50);
         fetchSearchResult('table_owner', searchElement.value, 1);
+        syncDelay(50);
         fetchSearchResult('name', searchElement.value, 1);
+    }
+    if (searchElement.value === "") {
+        let predictresult = document.getElementById("predict_result");
+        let predict = document.getElementById("predict");
+        predictresult.innerHTML = "";
+        predict.style.display = "none";
     }
     resultList = [];
     // if (searchElement.value === "") {
@@ -176,3 +184,11 @@ searchElement.addEventListener("input", (event) => {
     //     predict.style.display = "none";
     // }
 });
+
+function syncDelay(milliseconds) {
+    var start = new Date().getTime();
+    var end = 0;
+    while ((end - start) < milliseconds) {
+        end = new Date().getTime();
+    }
+}
