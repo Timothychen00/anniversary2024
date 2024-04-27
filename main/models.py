@@ -36,7 +36,7 @@ class DB():
 
         else:
             try:
-                self.client=pymongo.MongoClient('mongodb+srv://'+os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
             except:
                 print('【雲端】伺服器連線失敗 cloud failed')
         
