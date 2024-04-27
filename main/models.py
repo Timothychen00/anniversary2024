@@ -131,7 +131,7 @@ class Customers():
             'year' : '',
             'eat':'',
             'table_num':"",
-            'tag':[0],
+            'tag':[''],
             'donate':'',
             'type':'normal',
             'table_owner':"",
@@ -172,15 +172,15 @@ class Customers():
         key=(list(filter.keys())[0])
         if ambiguous:
             if filter:
-                ic(filter)
+                # ic(filter)
                 filter={key:{'$regex':".*"+filter[key]+'.*'}}
         result=db_model.collection.find(filter)
         result=list(result)
         
-        ic(result)
+        # ic(result)
         if mask:
             result=[{i:doc[i] for i in mask} for doc in result]
-        ic(result)
+        # ic(result)
         return result,'SUCCESS'
     
     def edit(filter,set_data):
