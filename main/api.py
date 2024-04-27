@@ -17,10 +17,10 @@ class customer_manage(Resource):
         mask=data.get('mask',None)
         if mask:
             mask=list(map(str,mask.split(',')))
-        ic(mask)
-        
+        # ic(mask)
+        # 
         ic({key:value})
-        ic(ambiguous)
+        # ic(ambiguous)
         result=Customers.search({key:value},ambiguous,mask)
         return result,200
     
