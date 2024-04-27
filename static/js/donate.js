@@ -1,5 +1,6 @@
 const donate_name_inputElement = document.getElementById("donate_name_input");
 let select_status = 0;
+let resultList = [];
 donate_name_inputElement.addEventListener("input", (event) => {
     if (event.inputType != 'deleteContentBackward') {
         fetchSearchResult('name', donate_name_inputElement.value, 1);
@@ -12,10 +13,11 @@ donate_name_inputElement.addEventListener("input", (event) => {
         predictresult.innerHTML = "";
         predict.style.display = "none";
     }
+    resultList = [];
 });
 
 
-let resultList = [];
+
 function fetchSearchResult(key, value, ambiguous) {
     if (value === "" || value === " ") {
         let predictresult = document.getElementById("predict_result");
@@ -31,7 +33,7 @@ function fetchSearchResult(key, value, ambiguous) {
             let predict = document.getElementById("predict");
             predictresult.innerHTML = "";
             predict.style.display = "none";
-            resultList = [];
+            // resultList = [];
             // console.log(data[0]);
             if (data[0].length > 0) {
                 for (let i = 0; i < data[0].length; i++) {
