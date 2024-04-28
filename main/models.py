@@ -74,8 +74,12 @@ class DB():
             
             try:
                 for key in  data_from_excel:
+                    type_function=labels[key][1]
                     data[labels[key][0]]=data_from_excel[key]
-                    data[labels[key][0]]=labels[key][1](data[labels[key][0]])# converting type
+                    data[labels[key][0]]=type_function(data[labels[key][0]])# converting type
+                    if data[labels[key][0]]=='nan':
+                        data[labels[key][0]]=''
+                    
                 ic(data)
                 Customers.add(data)
             except Exception as e:
