@@ -32,6 +32,8 @@ var circle_position = {
     "主桌": { x: 152, y: 91 }
 };
 
+var start_time= 0;
+var timesss=0
 let resultList = [];
 async function fetchSearchResult(key, value, ambiguous) {
     if (value === "" || value === " ") {
@@ -41,8 +43,10 @@ async function fetchSearchResult(key, value, ambiguous) {
         predict.style.display = "none";
         return;
     }
+
+    console.log('start',new Date().getTime());
     return await fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
-        .then(response => response.json())
+        .then(response => {console.log(response);console.log(new Date().getTime());return response.json()})
         .then(data => {
             // console.log(key, value, ambiguous);
             let predictresult = document.getElementById("predict_result");

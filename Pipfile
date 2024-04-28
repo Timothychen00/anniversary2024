@@ -12,6 +12,7 @@ pandas = "*"
 python-dotenv = "*"
 pymongo = "*"
 openpyxl = "*"
+gunicorn = "*"
 
 [dev-packages]
 

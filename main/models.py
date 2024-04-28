@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import pandas as pd
 import datetime,sys
 from icecream import ic
+from main.decorators import timeit
 from main.dataformat import Customer_Data
 datetime.timezone(datetime.timedelta(hours=8))
 
@@ -36,7 +37,7 @@ class DB():
 
         else:
             try:
-                self.client=pymongo.MongoClient('mongodb+srv://'+os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
+                self.client=pymongo.MongoClient(os.environ['DB_STRING'],tls=True,tlsAllowInvalidCertificates=True)
             except:
                 print('【雲端】伺服器連線失敗 cloud failed')
         
@@ -131,7 +132,7 @@ class Customers():
             'year' : '',
             'eat':'',
             'table_num':"",
-            'tag':[0],
+            'tag':[''],
             'donate':'',
             'type':'normal',
             'table_owner':"",
@@ -168,19 +169,20 @@ class Customers():
         db_model.collection.delete_one(filter)
         return "success",'SUCCESS'
     
+    @timeit
     def search(filter,ambiguous=True,mask=None):
         key=(list(filter.keys())[0])
         if ambiguous:
             if filter:
-                ic(filter)
+                # ic(filter)
                 filter={key:{'$regex':".*"+filter[key]+'.*'}}
         result=db_model.collection.find(filter)
         result=list(result)
         
-        ic(result)
+        # ic(result)
         if mask:
             result=[{i:doc[i] for i in mask} for doc in result]
-        ic(result)
+        # ic(result)
         return result,'SUCCESS'
     
     def edit(filter,set_data):
