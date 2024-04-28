@@ -174,20 +174,36 @@ class Customers():
         return "success",'SUCCESS'
     
     @timeit
-    def search(filter,ambiguous=True,mask=None):
-        key=(list(filter.keys())[0])
-        if ambiguous:
-            if filter:
-                # ic(filter)
-                filter={key:{'$regex':".*"+filter[key]+'.*'}}
-        result=db_model.collection.find(filter)
-        result=list(result)
+    def search(key,value,ambiguous=True,mask=None,multi=False):
+        # key=(list(filter.keys())[0])
+        ic(key,value,ambiguous)
+        ic(mask,multi)
         
-        # ic(result)
+        # type if multi is false make into list para
+        if multi:
+            if not isinstance(key,list) or not isinstance(value,list):
+                return "key and value are required to be a list while multi is True!","ERR"
+        else:
+            if isinstance(key,list) or isinstance(value,list):
+                return "key and value are required to be none of a list while multi is False!","ERR"
+            if not key or not value:# for the exception of empty query
+                result=list(db_model.collection.find({}))
+                return result,'SUCCESS'
+            else:
+                key=[key]
+                value=[value]
+            
+        if ambiguous:
+            filter=dict(zip(key,[{'$regex':".*"+str(i)+'.*'} for i in value]))
+        else:
+            filter=dict(zip(key,value))
+        separate_filter=[{i:filter[i]} for i in key]
+        # ic(separate_filter)
+        results=[list(db_model.collection.find(i)) for i in separate_filter]
         if mask:
-            result=[{i:doc[i] for i in mask} for doc in result]
-        # ic(result)
-        return result,'SUCCESS'
+            results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
+        # ic(*results)
+        return *results,'SUCCESS'
     
     def edit(filter,set_data):
         '''for not ambiguous only!'''
