@@ -32,8 +32,8 @@ var circle_position = {
     "主桌": { x: 152, y: 91 }
 };
 
-var start_time= 0;
-var timesss=0
+var start_time = 0;
+var timesss = 0
 let resultList = [];
 async function fetchSearchResult(key, value, ambiguous) {
     if (value === "" || value === " ") {
@@ -44,9 +44,9 @@ async function fetchSearchResult(key, value, ambiguous) {
         return;
     }
 
-    console.log('start',new Date().getTime());
+    console.log('start', new Date().getTime());
     return await fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
-        .then(response => {console.log(response);console.log(new Date().getTime());return response.json()})
+        .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
             // console.log(key, value, ambiguous);
             let predictresult = document.getElementById("predict_result");
@@ -94,6 +94,7 @@ async function fetchSearchResult(key, value, ambiguous) {
                             }
                         }
                     }
+                    // console.log(resultList.length);
                 }
                 else if (resultList.length === 1) {
                     // console.log(resultList[0].value)
@@ -177,6 +178,7 @@ async function fetchSearchResult(key, value, ambiguous) {
 
 searchElement.addEventListener("input", (event) => {
     (async () => {
+        resultList = [];
         document.getElementById("result").innerHTML = "";
         if (event.inputType != 'deleteContentBackward') {
             resultList = [];
@@ -194,7 +196,6 @@ searchElement.addEventListener("input", (event) => {
             predictresult.innerHTML = "";
             predict.style.display = "none";
         }
-        resultList = [];
     })();
     // if (searchElement.value === "") {
     //     let predictresult = document.getElementById("predict_result");
