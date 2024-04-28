@@ -15,8 +15,7 @@ class customer_manage(Resource):
         value=data.get('value',None)
         ambiguous=int(data.get('ambiguous',1))
         mask=data.get('mask',None)
-        multi=int(data.get('multi',0))
-        ic(data)
+        # ic(data)
         if mask and key and value:
             mask=list(map(str,mask.split(',')))
             key=list(map(str,key.split(',')))
@@ -27,7 +26,7 @@ class customer_manage(Resource):
         
         # ic({key:value})
         # ic(ambiguous)
-        result=Customers.search(key,value,ambiguous,mask,multi)
+        result=Customers.search(key,value,ambiguous,mask)
         return result,200
     
     @login_required

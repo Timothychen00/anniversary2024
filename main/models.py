@@ -174,24 +174,11 @@ class Customers():
         return "success",'SUCCESS'
     
     @timeit
-    def search(key,value,ambiguous=True,mask=None,multi=False):
-        # key=(list(filter.keys())[0])
-        ic(key,value,ambiguous)
-        ic(mask,multi)
-        
-        # type if multi is false make into list para
-        if multi:
-            if not isinstance(key,list) or not isinstance(value,list):
-                return "key and value are required to be a list while multi is True!","ERR"
-        else:
-            if isinstance(key,list) or isinstance(value,list):
-                return "key and value are required to be none of a list while multi is False!","ERR"
-            if not key or not value:# for the exception of empty query
-                result=list(db_model.collection.find({}))
-                return result,'SUCCESS'
-            else:
-                key=[key]
-                value=[value]
+    def search(key,value,ambiguous=True,mask=None):
+        # ic(key,value,ambiguous)
+        if not key or not value:# for the exception of empty query
+            result=list(db_model.collection.find({}))
+            return result,'SUCCESS'
             
         if ambiguous:
             filter=dict(zip(key,[{'$regex':".*"+str(i)+'.*'} for i in value]))
