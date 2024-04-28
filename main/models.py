@@ -74,8 +74,12 @@ class DB():
             
             try:
                 for key in  data_from_excel:
+                    type_function=labels[key][1]
                     data[labels[key][0]]=data_from_excel[key]
-                    data[labels[key][0]]=labels[key][1](data[labels[key][0]])# converting type
+                    data[labels[key][0]]=type_function(data[labels[key][0]])# converting type
+                    if data[labels[key][0]]=='nan':
+                        data[labels[key][0]]=''
+                    
                 ic(data)
                 Customers.add(data)
             except Exception as e:
@@ -170,20 +174,23 @@ class Customers():
         return "success",'SUCCESS'
     
     @timeit
-    def search(filter,ambiguous=True,mask=None):
-        key=(list(filter.keys())[0])
+    def search(key,value,ambiguous=True,mask=None):
+        # ic(key,value,ambiguous)
+        if not key or not value:# for the exception of empty query
+            result=list(db_model.collection.find({}))
+            return result,'SUCCESS'
+            
         if ambiguous:
-            if filter:
-                # ic(filter)
-                filter={key:{'$regex':".*"+filter[key]+'.*'}}
-        result=db_model.collection.find(filter)
-        result=list(result)
-        
-        # ic(result)
+            filter=dict(zip(key,[{'$regex':".*"+str(i)+'.*'} for i in value]))
+        else:
+            filter=dict(zip(key,value))
+        separate_filter=[{i:filter[i]} for i in key]
+        # ic(separate_filter)
+        results=[list(db_model.collection.find(i)) for i in separate_filter]
         if mask:
-            result=[{i:doc[i] for i in mask} for doc in result]
-        # ic(result)
-        return result,'SUCCESS'
+            results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
+        # ic(*results)
+        return *results,'SUCCESS'
     
     def edit(filter,set_data):
         '''for not ambiguous only!'''
