@@ -35,7 +35,7 @@ var circle_position = {
 var start_time= 0;
 var timesss=0
 let resultList = [];
-function fetchSearchResult(key, value, ambiguous) {
+async function fetchSearchResult(key, value, ambiguous) {
     if (value === "" || value === " ") {
         let predictresult = document.getElementById("predict_result");
         let predict = document.getElementById("predict");
@@ -43,10 +43,12 @@ function fetchSearchResult(key, value, ambiguous) {
         predict.style.display = "none";
         return;
     }
+
     console.log('start',new Date().getTime());
-    return fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
+    return await fetch('/api/customers?' + new URLSearchParams({ "key": key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
         .then(response => {console.log(response);console.log(new Date().getTime());return response.json()})
         .then(data => {
+            // console.log(key, value, ambiguous);
             let predictresult = document.getElementById("predict_result");
             let predict = document.getElementById("predict");
             let resultDiv = document.getElementById("result");
@@ -64,8 +66,9 @@ function fetchSearchResult(key, value, ambiguous) {
                     }
                 }
                 // Use the key and value as needed
-                console.log(resultList);
+                // console.log(resultList);
                 if (resultList.length > 1) {
+                    document.getElementById("user_input_display").innerHTML = "";
                     let predict = document.getElementById("predict");
                     predict.style.display = "block";
                     predictresult.innerHTML = "";
@@ -81,22 +84,29 @@ function fetchSearchResult(key, value, ambiguous) {
                             title = "貴賓";
                         }
                         predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}', '${resultList[i].value}', '0')"> ${title} : ${resultList[i].value}</button>`;
+                        if (i + 1 < resultList.length) {
+                            if (resultList[i].value == resultList[i + 1].value) {
+                                console.log('same');
+                                predict.style.display = "none";
+                                predictresult.innerHTML = "";
+                                let user_input_display = document.getElementById("user_input_display");
+                                user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+                            }
+                        }
                     }
                 }
                 else if (resultList.length === 1) {
-                    console.log(resultList[0].value)
-
-                    document.getElementById("search_input").value
+                    // console.log(resultList[0].value)
                     if (window)
                         document.getElementById("search_input").value = resultList[0].value;
-                    window.last_length = resultList[0].value.length;
-
-
-                    // search_input.value = value;
-
-
-
+                    if (resultList.length > 0) {
+                        window.last_length = resultList[0].value.length;
+                    }
                     search_result = data[0][0];
+
+                    let user_input_display = document.getElementById("user_input_display");
+                    user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+
                     let resultDiv = document.getElementById("result");
                     resultDiv.innerHTML = "";
                     let newDiv = document.createElement("div");
@@ -107,19 +117,19 @@ function fetchSearchResult(key, value, ambiguous) {
                             <div class="row align-items-center">
                                 <div class="">
                                     <div class="row align-items-center time-text mt-2 mx-auto">
-                                        <div class="card bg-c-blue order-card col mb-1" style="max-height:100px;min-width:70px !important;">
+                                        <div class="card bg-c-blue order-card col mb-1" style="min-height:100px;max-height:100px;min-width:70px !important;">
                                             <div class="card-block ">
                                                 <h6 style="font-size:14px">桌號</h6>
                                                 <h2 class="text-right"><span>`+ search_result.table_num + `</span></h2>
                                             </div>
                                         </div>
-                                        <div class="card bg-c-green order-card col ms-md-3 ms-2" style="max-height:100px;min-width:135px !important;">
+                                        <div class="card bg-c-green order-card col ms-md-3 ms-2" style="min-height:100px;max-height:100px;min-width:135px !important;">
                                             <div class="card-block">
                                                 <h6 class="">桌長</h6>
                                                 <h2 class="text-right"><span>`+ search_result.table_owner + `</span></h2>
                                             </div>
                                         </div>
-                                        <div class="card bg-c-yellow order-card  col ms-md-3 ms-2"  style="max-height:100px;min-width:105px !important;">
+                                        <div class="card bg-c-yellow order-card  col ms-md-3 ms-2"  style="min-height:100px;max-height:100px;min-width:105px !important;">
                                             <div class="card-block">
                                                 <h6 class="">畢業年</h6>
                                                 <h2 class="text-right"><span>`+ search_result.year + `</span></h2>
@@ -137,10 +147,11 @@ function fetchSearchResult(key, value, ambiguous) {
                     tableImage.style.height = "350px";
                     tableImage.style.display = "block";
                     tableImage.style.margin = "0 auto";
+                    tableImage.classList += "img-fluid mx-auto";
                     const imageDiv = document.createElement("div");
                     imageDiv.appendChild(tableImage);
                     imageDiv.id = "table_image";
-                    imageDiv.classList.add("img");
+                    imageDiv.classList += "img text-center";
                     newDiv.appendChild(imageDiv);
                     resultDiv.appendChild(newDiv);
                     function createMarker(x, y, divName) {
@@ -165,21 +176,26 @@ function fetchSearchResult(key, value, ambiguous) {
 
 
 searchElement.addEventListener("input", (event) => {
-    if (event.inputType != 'deleteContentBackward') {
+    (async () => {
+        document.getElementById("result").innerHTML = "";
+        if (event.inputType != 'deleteContentBackward') {
+            resultList = [];
+            await fetchSearchResult('table_num', searchElement.value, 0);
+            await fetchSearchResult('table_owner', searchElement.value, 1);
+            await fetchSearchResult('name', searchElement.value, 1);
+        }
+        else {
+            document.getElementById("user_input_display").innerHTML = "";
+            console.log('delete');
+        }
+        if (searchElement.value === "") {
+            let predictresult = document.getElementById("predict_result");
+            let predict = document.getElementById("predict");
+            predictresult.innerHTML = "";
+            predict.style.display = "none";
+        }
         resultList = [];
-        fetchSearchResult('table_num', searchElement.value, 0);
-        syncDelay(50);
-        fetchSearchResult('table_owner', searchElement.value, 1);
-        syncDelay(50);
-        fetchSearchResult('name', searchElement.value, 1);
-    }
-    if (searchElement.value === "") {
-        let predictresult = document.getElementById("predict_result");
-        let predict = document.getElementById("predict");
-        predictresult.innerHTML = "";
-        predict.style.display = "none";
-    }
-    resultList = [];
+    })();
     // if (searchElement.value === "") {
     //     let predictresult = document.getElementById("predict_result");
     //     let predict = document.getElementById("predict");
@@ -187,11 +203,3 @@ searchElement.addEventListener("input", (event) => {
     //     predict.style.display = "none";
     // }
 });
-
-function syncDelay(milliseconds) {
-    var start = new Date().getTime();
-    var end = 0;
-    while ((end - start) < milliseconds) {
-        end = new Date().getTime();
-    }
-}
