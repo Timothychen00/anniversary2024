@@ -197,6 +197,10 @@ class Customers():
         if mask:
             results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
         if not os.environ.get('Azure',0):
+            # # ic(results)
+            # print(len(results[0]))
+            # print(len(results[1]))
+            # len(results[2])
             ic(*results)
         return *results,'SUCCESS'
     

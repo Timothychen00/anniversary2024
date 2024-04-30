@@ -36,6 +36,7 @@ var start_time = 0;
 var timesss = 0
 let resultList = [];
 function fetchSearchResult(key, value, ambiguous) {
+    console.log("fetchSearchResult");
     resultList = [];
     if (value === "" || value === " ") {
         let predictresult = document.getElementById("predict_result");
@@ -45,7 +46,7 @@ function fetchSearchResult(key, value, ambiguous) {
         return;
     }
 
-    console.log('start', new Date().getTime());
+    // console.log('start', new Date().getTime());
     return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
@@ -62,7 +63,7 @@ function fetchSearchResult(key, value, ambiguous) {
                         resultList.push({ key: key, value: result[key] });
                     }
                 }
-                console.log('resultList', resultList, resultList.length);
+                // console.log('resultList', resultList, resultList.length);
             }
             else {
                 if (data[0].length > 0 || data[1].length > 0 || data[2].length > 0) {
@@ -196,13 +197,15 @@ function fetchSearchResult(key, value, ambiguous) {
 
 searchElement.addEventListener("input", (event) => {
     document.getElementById("result").innerHTML = "";
-    if (event.inputType != 'deleteContentBackward') {
+    console.log(event.inputType)
+    if (event.inputType != 'deleteContentBackward' && event.inputType != 'deleteCompositionText') {
+        // console.log("delete!!\n")
         resultList = [];
         fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
     }
     else {
         document.getElementById("user_input_display").innerHTML = "";
-        console.log('delete');
+        // console.log('delete');
     }
     if (searchElement.value === "") {
         let predictresult = document.getElementById("predict_result");
