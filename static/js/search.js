@@ -96,7 +96,8 @@ function fetchSearchResult(key, value, ambiguous) {
                     else if (resultList[i].key === 'name') {
                         title = "貴賓";
                     }
-                    predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}','${resultList[i].value}','0')"> ${title} : ${resultList[i].value}</button>`;
+                    let ambiguous_mode = 0;
+                    predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}','${resultList[i].value}',${ambiguous_mode})"> ${title} : ${resultList[i].value}</button>`;
                     if (i + 1 < resultList.length) {
                         if (resultList[i].value == resultList[i + 1].value) {
                             console.log('same');
@@ -197,7 +198,7 @@ searchElement.addEventListener("input", (event) => {
     document.getElementById("result").innerHTML = "";
     if (event.inputType != 'deleteContentBackward') {
         resultList = [];
-        fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], 1);
+        fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
     }
     else {
         document.getElementById("user_input_display").innerHTML = "";
