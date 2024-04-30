@@ -1,8 +1,11 @@
-from flask import render_template,redirect,session,Blueprint,request,jsonify
-from main.decorators import login_required,login_required_redirect
 import datetime
-from main.models import Employee
+
+from flask import render_template,redirect,session,Blueprint,request,jsonify
 from icecream import ic
+
+from main.models import Employee
+from main.decorators import login_required,login_required_redirect
+
 
 app_route=Blueprint('app_route',__name__)
 
