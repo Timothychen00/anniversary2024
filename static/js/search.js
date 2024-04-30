@@ -35,7 +35,7 @@ var circle_position = {
 var start_time = 0;
 var timesss = 0
 let resultList = [];
-function fetchSearchResult(value) {
+function fetchSearchResult(key, value, ambiguous) {
     resultList = [];
     if (value === "" || value === " ") {
         let predictresult = document.getElementById("predict_result");
@@ -46,7 +46,7 @@ function fetchSearchResult(value) {
     }
 
     console.log('start', new Date().getTime());
-    return fetch('/api/customers?' + new URLSearchParams({ 'key': ['table_num', 'table_owner', 'name'], 'value': [value,value,value], 'ambiguous': 1, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
+    return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
             console.log('sedn');
@@ -55,73 +55,86 @@ function fetchSearchResult(value) {
             let resultDiv = document.getElementById("result");
             predictresult.innerHTML = "";
             predict.style.display = "none";
-            if (data[0].length > 0 || data[1].length > 0 || data[2].length > 0) {
-                let key_list = ['table_num', 'table_owner', 'name'];
-                for (let r = 0; r < 3; r++) {
-                    for (let i = 0; i < data[r].length; i++) {
-                        let result = data[r][i];
-                        if (!resultList.some(item => item.key === key_list[r] && item.value === result[key_list[r]])) {
-                            resultList.push({ key: key_list[r], value: result[key_list[r]] });
-                        }
+            if (data.length == 2) {
+                for (let i = 0; i < data[0].length; i++) {
+                    let result = data[0][i];
+                    if (!resultList.some(item => item.key === key && item.value === result[key])) {
+                        resultList.push({ key: key, value: result[key] });
                     }
                 }
-
-                // Use the key and value as needed
-                // console.log(resultList);
-                if (resultList.length > 1) {
-                    document.getElementById("user_input_display").innerHTML = "";
-                    let predict = document.getElementById("predict");
-                    predict.style.display = "block";
-                    predictresult.innerHTML = "";
-                    for (let i = 0; i < resultList.length; i++) {
-                        let title;
-                        if (resultList[i].key === 'table_num') {
-                            title = "桌號";
-                        }
-                        else if (resultList[i].key === 'table_owner') {
-                            title = "桌長";
-                        }
-                        else if (resultList[i].key === 'name') {
-                            title = "貴賓";
-                        }
-                        predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].value}')"> ${title} : ${resultList[i].value}</button>`;
-                        if (i + 1 < resultList.length) {
-                            if (resultList[i].value == resultList[i + 1].value) {
-                                console.log('same');
-                                predict.style.display = "none";
-                                predictresult.innerHTML = "";
-                                let user_input_display = document.getElementById("user_input_display");
-                                user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
-                                resultList = [{ key: resultList[i].key, value: resultList[i].value }];
+                console.log('resultList', resultList, resultList.length);
+            }
+            else {
+                if (data[0].length > 0 || data[1].length > 0 || data[2].length > 0) {
+                    let key_list = ['table_num', 'table_owner', 'name'];
+                    for (let r = 0; r < 3; r++) {
+                        for (let i = 0; i < data[r].length; i++) {
+                            let result = data[r][i];
+                            if (!resultList.some(item => item.key === key_list[r] && item.value === result[key_list[r]])) {
+                                resultList.push({ key: key_list[r], value: result[key_list[r]] });
                             }
                         }
                     }
                 }
-                if (resultList.length === 1) {
-                    if (window)
-                        document.getElementById("search_input").value = resultList[0].value;
-                    if (resultList.length > 0) {
-                        window.last_length = resultList[0].value.length;
-                    }
+            }
 
-                    for (let i = 0; i < data.length; i++) {
-                        if (data[i].length == 1) {
-                            search_result = data[i][0];
+            // Use the key and value as needed
+            // console.log(resultList);
+            if (resultList.length > 1) {
+                document.getElementById("user_input_display").innerHTML = "";
+                let predict = document.getElementById("predict");
+                predict.style.display = "block";
+                predictresult.innerHTML = "";
+                for (let i = 0; i < resultList.length; i++) {
+                    let title;
+                    if (resultList[i].key === 'table_num') {
+                        title = "桌號";
+                    }
+                    else if (resultList[i].key === 'table_owner') {
+                        title = "桌長";
+                    }
+                    else if (resultList[i].key === 'name') {
+                        title = "貴賓";
+                    }
+                    let ambiguous_mode = 0;
+                    predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}','${resultList[i].value}',${ambiguous_mode})"> ${title} : ${resultList[i].value}</button>`;
+                    if (i + 1 < resultList.length) {
+                        if (resultList[i].value == resultList[i + 1].value) {
+                            console.log('same');
+                            predict.style.display = "none";
+                            predictresult.innerHTML = "";
+                            let user_input_display = document.getElementById("user_input_display");
+                            user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+                            resultList = [{ key: resultList[i].key, value: resultList[i].value }];
                         }
                     }
-                    if (data[0].length > 0) {
-                        search_result = data[0][0];
+                }
+            }
+            if (resultList.length == 1) {
+                if (window)
+                    document.getElementById("search_input").value = resultList[0].value;
+                if (resultList.length > 0) {
+                    window.last_length = resultList[0].value.length;
+                }
+
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].length == 1) {
+                        search_result = data[i][0];
                     }
+                }
+                if (data[0].length > 0) {
+                    search_result = data[0][0];
+                }
 
-                    let user_input_display = document.getElementById("user_input_display");
-                    user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+                let user_input_display = document.getElementById("user_input_display");
+                user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
 
-                    let resultDiv = document.getElementById("result");
-                    resultDiv.innerHTML = "";
-                    let newDiv = document.createElement("div");
-                    newDiv.classList.add("mt-3");
-                    // Rest of the code...
-                    newDiv.innerHTML = `
+                let resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = "";
+                let newDiv = document.createElement("div");
+                newDiv.classList.add("mt-3");
+                // Rest of the code...
+                newDiv.innerHTML = `
                         <div class="d-${window.innerWidth <= 768 ? 'flex' : ''} justify-content-between align-items-center mb-3">
                             <div class="row align-items-center">
                                 <div class="">
@@ -148,46 +161,44 @@ function fetchSearchResult(value) {
                                 </div>
                             </div>
                         </div>`;
-                    const tableImage = document.createElement("img");
-                    tableImage.id = "LiuYiFeiImg";
-                    tableImage.src = "/static/img/table.png";
-                    tableImage.alt = "table";
-                    tableImage.style.width = "350px";
-                    tableImage.style.height = "350px";
-                    tableImage.style.display = "block";
-                    tableImage.style.margin = "0 auto";
-                    const imageDiv = document.createElement("div");
-                    imageDiv.appendChild(tableImage);
-                    imageDiv.id = "table_image";
-                    imageDiv.classList += "img text-center";
-                    newDiv.appendChild(imageDiv);
-                    resultDiv.appendChild(newDiv);
-                    function createMarker(x, y, divName) {
-                        var div = document.createElement('div');
-                        div.className = 'marker animate__animated animate__flash animate__infinite'; div.style.left = x + 'px'; div.style.top = y + 'px';
-                        document.getElementById(divName).appendChild(div)
-                    }
-                    createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y, 'table_image')
+                const tableImage = document.createElement("img");
+                tableImage.id = "LiuYiFeiImg";
+                tableImage.src = "/static/img/table.png";
+                tableImage.alt = "table";
+                tableImage.style.width = "350px";
+                tableImage.style.height = "350px";
+                tableImage.style.display = "block";
+                tableImage.style.margin = "0 auto";
+                const imageDiv = document.createElement("div");
+                imageDiv.appendChild(tableImage);
+                imageDiv.id = "table_image";
+                imageDiv.classList += "img text-center";
+                newDiv.appendChild(imageDiv);
+                resultDiv.appendChild(newDiv);
+                function createMarker(x, y, divName) {
+                    var div = document.createElement('div');
+                    div.className = 'marker animate__animated animate__flash animate__infinite'; div.style.left = x + 'px'; div.style.top = y + 'px';
+                    document.getElementById(divName).appendChild(div)
                 }
+                createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y, 'table_image')
             }
+        }
             // else {
             //     predict = document.getElementById("predict");
             //     predict.style.display = "none";
             //     resultDiv = document.getElementById("result");
             //     resultDiv.innerHTML = '<h3 class="text-center text-danger mt-5 mb-5 ">查無資料</h3>';
             // }
-        })
+        )
 };
 
 
 
 searchElement.addEventListener("input", (event) => {
-
-    resultList = [];
     document.getElementById("result").innerHTML = "";
     if (event.inputType != 'deleteContentBackward') {
         resultList = [];
-        fetchSearchResult(searchElement.value, 0);
+        fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
     }
     else {
         document.getElementById("user_input_display").innerHTML = "";
@@ -199,11 +210,4 @@ searchElement.addEventListener("input", (event) => {
         predictresult.innerHTML = "";
         predict.style.display = "none";
     }
-
-    // if (searchElement.value === "") {
-    //     let predictresult = document.getElementById("predict_result");
-    //     let predict = document.getElementById("predict");
-    //     predictresult.innerHTML = "";
-    //     predict.style.display = "none";
-    // }
 });
