@@ -186,15 +186,16 @@ class Customers():
             result=list(db_model.collection.find({}))
             return result,'SUCCESS'
         
-        process_each_filter=lambda x,ambiguous: {'$regex':".*"+x+'.*'} if ambiguous else value
-        filter=dict(zip(key,[process_each_filter(str(value[i]),ambiguous[i]) for i in range(len(value))]))
-        
+        process_each_filter=lambda x,ambiguous,each_value: {'$regex':".*"+x+'.*'} if ambiguous else each_value
+        filter=dict(zip(key,[process_each_filter(str(value[i]),ambiguous[i],value[i]) for i in range(len(value))]))
+        if not os.environ.get('Azure',0):
+            ic(filter)
         separate_filter=[{i:filter[i]} for i in key]
-        # ic(separate_filter)
+        if not os.environ.get('Azure',0):
+            ic(separate_filter)
         results=[list(db_model.collection.find(i)) for i in separate_filter]
         if mask:
             results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
-            
         if not os.environ.get('Azure',0):
             ic(*results)
         return *results,'SUCCESS'
