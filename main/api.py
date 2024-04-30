@@ -1,7 +1,9 @@
+import json
+
 from flask_restful import Resource
 from flask import request,jsonify
 from icecream import ic
-import json
+
 from main.decorators import login_required
 from main.models import db_model,Customers
 
@@ -13,13 +15,14 @@ class customer_manage(Resource):
         
         key=data.get('key',None)
         value=data.get('value',None)
-        ambiguous=int(data.get('ambiguous',1))
+        ambiguous=data.get('ambiguous',None)
         mask=data.get('mask',None)
         # ic(data)
         if mask and key and value:
             mask=list(map(str,mask.split(',')))
             key=list(map(str,key.split(',')))
             value=list(map(str,value.split(',')))
+            ambiguous=list(map(int,ambiguous.split(',')))
         else:
             return ('key, value, mask are required!','ERR'),513
             

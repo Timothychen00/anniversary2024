@@ -1,6 +1,7 @@
-from flask import flash, redirect,session
 from functools import wraps
 import time
+
+from flask import flash, redirect,session
 from icecream import ic
 
 def timeit(func):

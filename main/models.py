@@ -1,12 +1,18 @@
+import os
+import sys
+import random
+import datetime
+
 import pymongo
 from flask import session,jsonify
-import os, pymongo,sys,random
 from dotenv import load_dotenv
 import pandas as pd
-import datetime,sys
 from icecream import ic
+
 from main.decorators import timeit
 from main.dataformat import Customer_Data
+
+
 datetime.timezone(datetime.timedelta(hours=8))
 
 def timestamp():
@@ -174,22 +180,23 @@ class Customers():
         return "success",'SUCCESS'
     
     @timeit
-    def search(key,value,ambiguous=True,mask=None):
+    def search(key,value,ambiguous,mask=None):
         # ic(key,value,ambiguous)
         if not key or not value:# for the exception of empty query
             result=list(db_model.collection.find({}))
             return result,'SUCCESS'
-            
-        if ambiguous:
-            filter=dict(zip(key,[{'$regex':".*"+str(i)+'.*'} for i in value]))
-        else:
-            filter=dict(zip(key,value))
+        
+        process_each_filter=lambda x,ambiguous: {'$regex':".*"+x+'.*'} if ambiguous else value
+        filter=dict(zip(key,[process_each_filter(str(value[i]),ambiguous[i]) for i in range(len(value))]))
+        
         separate_filter=[{i:filter[i]} for i in key]
         # ic(separate_filter)
         results=[list(db_model.collection.find(i)) for i in separate_filter]
         if mask:
             results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
-        # ic(*results)
+            
+        if not os.environ.get('Azure',0):
+            ic(*results)
         return *results,'SUCCESS'
     
     def edit(filter,set_data):
