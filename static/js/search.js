@@ -37,7 +37,7 @@ var timesss = 0
 let resultList = [];
 var table_num_list = [];
 
-function fetchSearchResult(key, value, ambiguous,borter=null) {
+function fetchSearchResult(key, value, ambiguous, borter = null) {
     console.log("fetchSearchResult");
     resultList = [];
     if (value === "" || value === " ") {
@@ -51,10 +51,10 @@ function fetchSearchResult(key, value, ambiguous,borter=null) {
 
     // console.log('start', new Date().getTime());
 
-//borter
-    borter_signal=null;
+    //borter
+    borter_signal = null;
     if (borter)
-        borter_signal=borter.signal;
+        borter_signal = borter.signal;
 
     return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' }, signal: borter_signal })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
@@ -207,12 +207,12 @@ function fetchSearchResult(key, value, ambiguous,borter=null) {
         )
 };
 
-function fetchSearchTable_Num(value,borter=null) {
-    borter_signal=null;
+function fetchSearchTable_Num(value, borter = null) {
+    borter_signal = null;
     if (borter)
-        borter_signal=borter.signal;
+        borter_signal = borter.signal;
 
-    fetch('/api/customers?' + new URLSearchParams({ "key": 'table_num', 'value': value, 'ambiguous': 0, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' ,signal:borter_signal} })
+    fetch('/api/customers?' + new URLSearchParams({ "key": 'table_num', 'value': value, 'ambiguous': 0, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json', signal: borter_signal } })
         .then(res => (res.json()))
         .then(data => {
             table_num_list = [];
@@ -228,6 +228,7 @@ function fetchSearchTable_Num(value,borter=null) {
 
 searchElement.addEventListener("input", (event) => {
     document.getElementById("result").innerHTML = "";
+    document.getElementById("user_input_display").innerHTML = "";
     if (searchElement.value === "" || searchElement.value === " ") {
         let predictresult = document.getElementById("predict_result");
         let predict = document.getElementById("predict");
@@ -236,25 +237,21 @@ searchElement.addEventListener("input", (event) => {
     }
     else {
         if (event.inputType != 'deleteContentBackward' && event.inputType != 'deleteCompositionText') {
-            
-            for(i in SignalController)
-                for (j in SignalController[i]) 
+
+            for (i in SignalController)
+                for (j in SignalController[i])
                     SignalController[i][j].abort();
-            
-        
+
+
             SignalController = new Array();
-            SignalController.push([new AbortController(),new AbortController()]);
+            SignalController.push([new AbortController(), new AbortController()]);
             console.log(SignalController);
-            aborter1=SignalController[SignalController.length-1][0];
-            aborter2=SignalController[SignalController.length-1][1];
+            aborter1 = SignalController[SignalController.length - 1][0];
+            aborter2 = SignalController[SignalController.length - 1][1];
 
             resultList = [];
-            fetchSearchTable_Num(searchElement.value,aborter=aborter1);
-            fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [1, 1, 1],aborter=aborter2);
-        }
-        else {
-            document.getElementById("user_input_display").innerHTML = "";
-            console.log('delete');
+            fetchSearchTable_Num(searchElement.value, aborter = aborter1);
+            fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [1, 1, 1], aborter = aborter2);
         }
     }
 })
