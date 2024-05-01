@@ -70,17 +70,19 @@ class DB():
         ic(len(dataframe))
         length=len(dataframe)
         labels = {'流水號':('_id',str) ,'姓名':('name',str),'畢業年':('year',str),'素食':('eat',str),'桌次':('table_num',str) ,'桌名':('table_name',str),'桌長':('table_owner',str),'備註':('note',str),'出席':('present',str),'身分':('type',str)}
-
+        if input("確認是否刪除資料(y/n)")=='y':
+            db_model.collection.delete_many({})
         for row in range(length):
             ic(type(dataframe.iloc[row]))
 
             data_from_excel=dict(dataframe.iloc[row])
             ic(data_from_excel)
             data={}
-            
+
             try:
                 for key in  data_from_excel:
                     type_function=labels[key][1]
+                    ic(type_function)
                     data[labels[key][0]]=data_from_excel[key]
                     data[labels[key][0]]=type_function(data[labels[key][0]])# converting type
                     if data[labels[key][0]]=='nan':
