@@ -1,35 +1,34 @@
 const searchElement = document.getElementById("search_input");
 var circle_position = {
-    1: { x: 5, y: 80 },
-    2: { x: 5, y: 131 },
-    3: { x: 5, y: 180 },
-    5: { x: 5, y: 230 },
-    6: { x: 5, y: 282 },
-    7: { x: 52, y: 106 },
-    8: { x: 52, y: 156 },
-    9: { x: 52, y: 206 },
-    10: { x: 52, y: 256 },
-    11: { x: 99, y: 134 },
-    12: { x: 99, y: 183 },
-    15: { x: 99, y: 233 },
-    16: { x: 100, y: 283 },
-    17: { x: 152, y: 156 },
-    18: { x: 152, y: 206 },
-    19: { x: 152, y: 255 },
-    20: { x: 204, y: 132 },
-    21: { x: 204, y: 182 },
-    22: { x: 204, y: 231 },
-    23: { x: 204, y: 282 },
-    25: { x: 252, y: 110 },
-    26: { x: 252, y: 160 },
-    27: { x: 252, y: 210 },
-    28: { x: 252, y: 260 },
-    29: { x: 300, y: 86 },
-    30: { x: 300, y: 134 },
-    31: { x: 300, y: 185 },
-    32: { x: 300, y: 235 },
-    33: { x: 300, y: 286 },
-    "主桌": { x: 152, y: 91 }
+    1: { x: 52, y: 108 },
+    2: { x: 3, y: 131 },
+    3: { x: 3, y: 183 },
+    5: { x: 3, y: 234 },
+    6: { x: 3, y: 285 },
+    7: { x: 52, y: 158 },
+    8: { x: 52, y: 258 },
+    9: { x: 100, y: 287 },
+    10: { x: 52, y: 208 },
+    11: { x: 100, y: 135 },
+    12: { x: 100, y: 186 },
+    15: { x: 100, y: 237 },
+    16: { x: 152, y: 208 },
+    17: { x: 205, y: 234 },
+    18: { x: 152, y: 258 },
+    19: { x: 205, y: 284 },
+    20: { x: 253, y: 263 },
+    21: { x: 253, y: 213 },
+    22: { x: 303, y: 188 },
+    23: { x: 303, y: 238 },
+    25: { x: 303, y: 288 },
+    "主桌": { x: 152, y: 91 },
+    "貴1": { x: 205, y: 132 },
+    "貴2": { x: 152, y: 157 },
+    "貴3": { x: 205, y: 184 },
+    "師1": { x: 253, y: 110 },
+    "師2": { x: 303, y: 86 },
+    "師3": { x: 253, y: 162 },
+    "家長會": { x: 303, y: 136 },
 };
 
 var start_time = 0;
@@ -196,18 +195,20 @@ function fetchSearchResult(key, value, ambiguous) {
 
 searchElement.addEventListener("input", (event) => {
     document.getElementById("result").innerHTML = "";
-    if (event.inputType != 'deleteContentBackward') {
-        resultList = [];
-        fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
-    }
-    else {
-        document.getElementById("user_input_display").innerHTML = "";
-        console.log('delete');
-    }
-    if (searchElement.value === "") {
+    if (searchElement.value === "" || searchElement.value === " ") {
         let predictresult = document.getElementById("predict_result");
         let predict = document.getElementById("predict");
         predictresult.innerHTML = "";
         predict.style.display = "none";
+    }
+    else {
+        if (event.inputType != 'deleteContentBackward') {
+            resultList = [];
+            fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
+        }
+        else {
+            document.getElementById("user_input_display").innerHTML = "";
+            console.log('delete');
+        }
     }
 });
