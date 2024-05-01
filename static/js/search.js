@@ -226,7 +226,7 @@ function fetchSearchTable_Num(value, borter = null) {
 }
 
 
-searchElement.addEventListener("input", (event) => {
+function search(event) {
     document.getElementById("result").innerHTML = "";
     document.getElementById("user_input_display").innerHTML = "";
     if (searchElement.value === "" || searchElement.value === " ") {
@@ -254,4 +254,7 @@ searchElement.addEventListener("input", (event) => {
             fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [1, 1, 1], aborter = aborter2);
         }
     }
-})
+}
+
+searchElement.addEventListener('input', (event) => search(event));
+document.getElementById("search_button").addEventListener('click', (event) => search(event));
