@@ -31,6 +31,7 @@ var circle_position = {
     "家長會": { x: 303, y: 136 },
 };
 
+var SignalController=new Array();
 var start_time = 0;
 var timesss = 0
 let resultList = [];
@@ -45,8 +46,15 @@ function fetchSearchResult(key, value, ambiguous) {
         return;
     }
 
+    for (i in SignalController) {
+        SignalController[i].abort();
+        // SignalController.pop(i);
+    }
+    SignalController=new Array();
+    SignalController.push(new AbortController());
+    console.log(SignalController);
     // console.log('start', new Date().getTime());
-    return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
+    return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' },signal:SignalController[SignalController.length-1].signal })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
             console.log('sedn');
