@@ -31,10 +31,12 @@ var circle_position = {
     "家長會": { x: 303, y: 136 },
 };
 
-var SignalController=new Array();
+var SignalController = new Array();
 var start_time = 0;
 var timesss = 0
 let resultList = [];
+var table_num_list = [];
+
 function fetchSearchResult(key, value, ambiguous) {
     console.log("fetchSearchResult");
     resultList = [];
@@ -50,11 +52,11 @@ function fetchSearchResult(key, value, ambiguous) {
         SignalController[i].abort();
         // SignalController.pop(i);
     }
-    SignalController=new Array();
+    SignalController = new Array();
     SignalController.push(new AbortController());
     console.log(SignalController);
     // console.log('start', new Date().getTime());
-    return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' },signal:SignalController[SignalController.length-1].signal })
+    return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' }, signal: SignalController[SignalController.length - 1].signal })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
             console.log('sedn');
@@ -63,27 +65,33 @@ function fetchSearchResult(key, value, ambiguous) {
             let resultDiv = document.getElementById("result");
             predictresult.innerHTML = "";
             predict.style.display = "none";
-            if (data.length == 2) {
-                for (let i = 0; i < data[0].length; i++) {
-                    let result = data[0][i];
-                    if (!resultList.some(item => item.key === key && item.value === result[key])) {
-                        resultList.push({ key: key, value: result[key] });
+            if (table_num_list.length != 1) {
+                if (data.length == 2) {
+                    for (let i = 0; i < data[0].length; i++) {
+                        let result = data[0][i];
+                        if (!resultList.some(item => item.key === key && item.value === result[key])) {
+                            resultList.push({ key: key, value: result[key] });
+                        }
                     }
+                    // console.log('resultList', resultList, resultList.length);
                 }
-                // console.log('resultList', resultList, resultList.length);
-            }
-            else {
-                if (data[0].length > 0 || data[1].length > 0 || data[2].length > 0) {
-                    let key_list = ['table_num', 'table_owner', 'name'];
-                    for (let r = 0; r < 3; r++) {
-                        for (let i = 0; i < data[r].length; i++) {
-                            let result = data[r][i];
-                            if (!resultList.some(item => item.key === key_list[r] && item.value === result[key_list[r]])) {
-                                resultList.push({ key: key_list[r], value: result[key_list[r]] });
+                else {
+                    if (data[0].length > 0 || data[1].length > 0 || data[2].length > 0) {
+                        let key_list = ['table_num', 'table_owner', 'name'];
+                        for (let r = 0; r < 3; r++) {
+                            for (let i = 0; i < data[r].length; i++) {
+                                let result = data[r][i];
+                                if (!resultList.some(item => item.key === key_list[r] && item.value === result[key_list[r]])) {
+                                    resultList.push({ key: key_list[r], value: result[key_list[r]] });
+                                }
                             }
                         }
                     }
                 }
+            }
+            else {
+                resultList = table_num_list;
+                data = [table_num_list];
             }
 
             // Use the key and value as needed
@@ -124,7 +132,6 @@ function fetchSearchResult(key, value, ambiguous) {
                 if (resultList.length > 0) {
                     window.last_length = resultList[0].value.length;
                 }
-
                 for (let i = 0; i < data.length; i++) {
                     if (data[i].length == 1) {
                         search_result = data[i][0];
@@ -200,6 +207,19 @@ function fetchSearchResult(key, value, ambiguous) {
         )
 };
 
+function fetchSearchTable_Num(value) {
+    fetch('/api/customers?' + new URLSearchParams({ "key": 'table_num', 'value': value, 'ambiguous': 0, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' } })
+        .then(res => (res.json()))
+        .then(data => {
+            table_num_list = [];
+            for (let i = 0; i < data[0].length; i++) {
+                let result = data[0][i];
+                if (!table_num_list.some(item => item.table_num == result['table_num'])) {
+                    table_num_list.push({ key: 'table_num', value: result.table_num, table_num: result.table_num, name: result.name, table_owner: result.table_owner, year: result.year });
+                }
+            }
+        });
+}
 
 
 searchElement.addEventListener("input", (event) => {
@@ -213,7 +233,8 @@ searchElement.addEventListener("input", (event) => {
     else {
         if (event.inputType != 'deleteContentBackward' && event.inputType != 'deleteCompositionText') {
             resultList = [];
-            fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [0, 1, 1]);
+            fetchSearchTable_Num(searchElement.value);
+            fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [1, 1, 1]);
         }
         else {
             document.getElementById("user_input_display").innerHTML = "";
