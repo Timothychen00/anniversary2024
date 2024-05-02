@@ -182,28 +182,37 @@ class Customers():
         return "success",'SUCCESS'
     
     @timeit
-    def search(key,value,ambiguous,mask=None):
+    def search(key,value,ambiguous,mask=None,specific=False):
         # ic(key,value,ambiguous)
+
         if not key or not value:# for the exception of empty query
             result=list(db_model.collection.find({}))
             return result,'SUCCESS'
         
         process_each_filter=lambda x,ambiguous,each_value: {'$regex':".*"+x+'.*'} if ambiguous else each_value
+        
+
         filter=dict(zip(key,[process_each_filter(str(value[i]),ambiguous[i],value[i]) for i in range(len(value))]))
+            
         if not os.environ.get('Azure',0):
             ic(filter)
-        separate_filter=[{i:filter[i]} for i in key]
+        
+        if not specific:
+            separate_filter=[{i:filter[i]} for i in key]
+        else:
+            separate_filter=[filter]
+            
         if not os.environ.get('Azure',0):
             ic(separate_filter)
         results=[list(db_model.collection.find(i)) for i in separate_filter]
         if mask:
             results=[[{i:doc[i] for i in mask} for doc in result] for result in results]
         if not os.environ.get('Azure',0):
-            # # ic(results)
+            ic(results)
             # print(len(results[0]))
             # print(len(results[1]))
             # len(results[2])
-            ic(*results)
+            # ic(*results)
         return *results,'SUCCESS'
     
     def edit(filter,set_data):
