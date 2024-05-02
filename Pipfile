@@ -12,6 +12,7 @@ pymongo = "*"
 openpyxl = "*"
 gunicorn = "*"
 locust = "*"
+flask = "*"
 
 [dev-packages]
 
