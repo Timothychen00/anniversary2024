@@ -169,11 +169,7 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
 
 
                 let resultDiv = document.getElementById("result");
-                resultDiv.innerHTML = "";
-                let newDiv = document.createElement("div");
-                newDiv.classList.add("mt-3");
-                // Rest of the code...
-                newDiv.innerHTML = `
+                resultDiv.innerHTML = `
                         <div class="d-${window.innerWidth <= 768 ? 'flex' : ''} justify-content-between align-items-center mb-3">
                             <div class="row align-items-center">
                                 <div class="">
@@ -200,23 +196,14 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
                                 </div>
                             </div>
                         </div>`;
-                const tableImage = document.createElement("img");
-                tableImage.id = "LiuYiFeiImg";
-                tableImage.src = "https://i.imgur.com/pmqSChJ.png";
-                tableImage.alt = "桌圖載入中";
-                tableImage.classList += "tableImage";
-                const imageDiv = document.createElement("div");
-                imageDiv.appendChild(tableImage);
-                imageDiv.id = "table_image";
-                imageDiv.classList += "img text-center css_center";
-                newDiv.appendChild(imageDiv);
-                resultDiv.appendChild(newDiv);
-                function createMarker(x, y, divName) {
+
+                function createMarker(x, y) {
+                    document.getElementById('table_image').style.display = "block";
                     var div = document.createElement('div');
-                    div.className = 'marker animate__animated animate__flash animate__infinite'; div.style.left = x + 'px'; div.style.top = y + 'px';
-                    document.getElementById(divName).appendChild(div)
+                    div.className = 'marker animate__animated animate__flash animate__infinite'; div.style.left = x + 'px'; div.style.top = y + 'px'; div.id = 'marker';
+                    document.getElementById('table_image').appendChild(div);
                 }
-                createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y, 'table_image')
+                createMarker(circle_position[search_result.table_num].x, circle_position[search_result.table_num].y)
             }
         }
             // else {
@@ -289,6 +276,11 @@ function clear() {
     search_result = [];
     resultList = [];
     specific_value = 0;
+    document.getElementById('table_image').style.display = "none";
+    try {
+        document.getElementById("marker").remove();
+    } catch (e) {
+    }
 }
 
 function hasChinese(str) {
