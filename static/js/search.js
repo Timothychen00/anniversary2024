@@ -1,56 +1,60 @@
-const searchElement = document.getElementById("search_input");
 var circle_position = {
-    1: { x: 52, y: 108 },
-    2: { x: 3, y: 131 },
-    3: { x: 3, y: 183 },
-    5: { x: 3, y: 234 },
-    6: { x: 3, y: 285 },
-    7: { x: 52, y: 158 },
-    8: { x: 52, y: 258 },
-    9: { x: 100, y: 287 },
-    10: { x: 52, y: 208 },
-    11: { x: 100, y: 135 },
-    12: { x: 100, y: 186 },
-    15: { x: 100, y: 237 },
-    16: { x: 152, y: 208 },
-    17: { x: 205, y: 234 },
-    18: { x: 152, y: 258 },
-    19: { x: 205, y: 284 },
-    20: { x: 253, y: 263 },
-    21: { x: 253, y: 213 },
-    22: { x: 303, y: 188 },
-    23: { x: 303, y: 238 },
-    25: { x: 303, y: 288 },
-    "主桌": { x: 152, y: 91 },
-    "貴1": { x: 205, y: 132 },
-    "貴2": { x: 152, y: 157 },
-    "貴3": { x: 205, y: 184 },
-    "師1": { x: 253, y: 110 },
-    "師2": { x: 303, y: 86 },
-    "師3": { x: 253, y: 162 },
-    "家長會": { x: 303, y: 136 },
+    1: { x: 7, y: 90 },
+    2: { x: 54, y: 115 },
+    3: { x: 7, y: 139 },
+    5: { x: 7, y: 190 },
+    6: { x: 7, y: 239 },
+    7: { x: 7, y: 290 },
+    8: { x: 54, y: 164 },
+    9: { x: 54, y: 265 },
+    10: { x: 103, y: 293 },
+    11: { x: 54, y: 215 },
+    12: { x: 103, y: 143 },
+    15: { x: 103, y: 193 },
+    16: { x: 103, y: 243 },
+    17: { x: 154, y: 215 },
+    18: { x: 206, y: 240 },
+    19: { x: 154, y: 265 },
+    20: { x: 206, y: 290 },
+    21: { x: 255, y: 269 },
+    22: { x: 255, y: 219 },
+    23: { x: 302, y: 195 },
+    25: { x: 302, y: 245 },
+    26: { x: 302, y: 295 },
+    27: { x: 252, y: 210 },
+    28: { x: 252, y: 260 },
+    29: { x: 300, y: 86 },
+    30: { x: 300, y: 134 },
+    31: { x: 300, y: 185 },
+    32: { x: 300, y: 235 },
+    33: { x: 300, y: 286 },
+    "主桌": { x: 154, y: 100 },
+    "貴1": { x: 206, y: 140 },
+    "貴2": { x: 154, y: 165 },
+    "貴3": { x: 206, y: 190 },
+    "師1": { x: 255, y: 119 },
+    "師2": { x: 303, y: 95 },
+    "師3": { x: 255, y: 169 },
+    "家長會": { x: 303, y: 143 },
 };
+let searchElement = document.getElementById("search_input");
+let predictresult = document.getElementById("predict_result");
+let predict = document.getElementById("predict");
+let resultDiv = document.getElementById("result");
+let search_result = [];
+let resultList = [];
+let table_num_list = [];
+let user_input_display = document.getElementById("user_input_display");
+let specific_value = 0;
 
 var SignalController = new Array();
 var start_time = 0;
 var timesss = 0
-let resultList = [];
-var table_num_list = [];
+
 
 function fetchSearchResult(key, value, ambiguous, borter = null) {
-    console.log("fetchSearchResult");
+    clear();
     resultList = [];
-    if (value === "" || value === " ") {
-        let predictresult = document.getElementById("predict_result");
-        let predict = document.getElementById("predict");
-        predictresult.innerHTML = "";
-        predict.style.display = "none";
-        return;
-    }
-
-
-    // console.log('start', new Date().getTime());
-
     //borter
     borter_signal = null;
     if (borter)
@@ -59,12 +63,6 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
     return fetch('/api/customers?' + new URLSearchParams({ 'key': key, 'value': value, 'ambiguous': ambiguous, 'mask': ['_id', 'table_num', 'name', 'table_owner', 'year'] }), { method: 'get', headers: { 'Content-Type': 'application/json' }, signal: borter_signal })
         .then(response => { console.log(response); console.log(new Date().getTime()); return response.json() })
         .then(data => {
-            console.log('sedn');
-            let predictresult = document.getElementById("predict_result");
-            let predict = document.getElementById("predict");
-            let resultDiv = document.getElementById("result");
-            predictresult.innerHTML = "";
-            predict.style.display = "none";
             if (table_num_list.length != 1) {
                 if (data.length == 2) {
                     for (let i = 0; i < data[0].length; i++) {
@@ -81,8 +79,8 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
                         for (let r = 0; r < 3; r++) {
                             for (let i = 0; i < data[r].length; i++) {
                                 let result = data[r][i];
-                                if (!resultList.some(item => item.key === key_list[r] && item.value === result[key_list[r]])) {
-                                    resultList.push({ key: key_list[r], value: result[key_list[r]] });
+                                if (!resultList.some(item => item.key == key_list[r] && item.value == result[key_list[r]] && item.table_num == result.table_num)) {
+                                    resultList.push({ key: key_list[r], value: result[key_list[r]], id: result['_id'], table_num: result.table_num });
                                 }
                             }
                         }
@@ -91,13 +89,15 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
             }
             else {
                 resultList = table_num_list;
-                data = [table_num_list];
+                data = [table_num_list, 'SUCCESS'];
             }
+            console.log('data >', data);
+            console.log('table_num_list >', table_num_list);
+            console.log('resultList >', resultList);
 
             // Use the key and value as needed
-            // console.log(resultList);
             if (resultList.length > 1) {
-                document.getElementById("user_input_display").innerHTML = "";
+                user_input_display.innerHTML = "";
                 let predict = document.getElementById("predict");
                 predict.style.display = "block";
                 predictresult.innerHTML = "";
@@ -112,37 +112,61 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
                     else if (resultList[i].key === 'name') {
                         title = "貴賓";
                     }
-                    let ambiguous_mode = 0;
-                    predictresult.innerHTML += `<button class="btn btn-outline-secondary mt-2 ms-2" style="font-size:25px !important;" onclick="fetchSearchResult('${resultList[i].key}','${resultList[i].value}',${ambiguous_mode})"> ${title} : ${resultList[i].value}</button>`;
-                    if (i + 1 < resultList.length) {
-                        if (resultList[i].value == resultList[i + 1].value) {
-                            console.log('same');
-                            predict.style.display = "none";
-                            predictresult.innerHTML = "";
-                            let user_input_display = document.getElementById("user_input_display");
-                            user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
-                            resultList = [{ key: resultList[i].key, value: resultList[i].value }];
+
+                    let table_num;
+                    if (resultList[i].value == resultList[i].table_num) {
+                        table_num = "同上";
+                    }
+                    else {
+                        if (hasChinese(String(resultList[i].table_num))) {
+                            table_num = resultList[i].table_num;
+
+                        }
+                        else {
+                            table_num = "桌" + resultList[i].table_num;
                         }
                     }
+
+                    predictresult.innerHTML += `<button onclick="click_predict_selection('${resultList[i].id}','${resultList[i].value}')" class="btn btn-outline-dark d-inline-flex align-items-center pe-0 mt-2 ms-2 fw-300 position-relative" style="border: 2px solid black !important;; border-radius:1.2rem;font-size:25px;min-width:245px; !important; ">
+                                                ${title} : ${resultList[i].value} <span class=" ms-2  mb-1 align-self-end" style="font-size: 15px;">
+                                                <b>${table_num}</b></span> <ion-icon name="chevron-forward-outline" class="ms-2 me-0 position-absolute end-0" style="font-size: 34px;"></ion-icon></button>`;
+                    // if (i + 1 < resultList.length) {
+                    //     if (resultList[i].value == resultList[i + 1].value) {
+                    //         console.log('same');
+                    //         predict.style.display = "none";
+                    //         predictresult.innerHTML = "";
+                    //         user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+                    //         resultList = [{ key: resultList[i].key, value: resultList[i].value }];
+                    //     }
+                    // }
                 }
             }
+            console.log('after filter >', resultList);
             if (resultList.length == 1) {
                 if (window)
-                    document.getElementById("search_input").value = resultList[0].value;
+                    if (specific_value == 0) {
+                        document.getElementById("search_input").value = resultList[0].value;
+                    }
+                    else {
+                        document.getElementById("search_input").value = specific_value;
+                    }
+
                 if (resultList.length > 0) {
                     window.last_length = resultList[0].value.length;
                 }
-                for (let i = 0; i < data.length; i++) {
-                    if (data[i].length == 1) {
+                for (let i = 0; i < data.length - 1; i++) {
+                    if (data[i].length > 0) {
                         search_result = data[i][0];
                     }
                 }
-                if (data[0].length > 0) {
-                    search_result = data[0][0];
+                console.log('search_result >', search_result);
+                if (specific_value == 0) {
+                    user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
+                }
+                else {
+                    user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + specific_value + '</h4>'
                 }
 
-                let user_input_display = document.getElementById("user_input_display");
-                user_input_display.innerHTML = '<h4 class="text-center mt-3 text-secondary">搜尋結果：' + document.getElementById("search_input").value + '</h4>'
 
                 let resultDiv = document.getElementById("result");
                 resultDiv.innerHTML = "";
@@ -178,16 +202,13 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
                         </div>`;
                 const tableImage = document.createElement("img");
                 tableImage.id = "LiuYiFeiImg";
-                tableImage.src = "/static/img/table.png";
-                tableImage.alt = "table";
-                tableImage.style.width = "350px";
-                tableImage.style.height = "350px";
-                tableImage.style.display = "block";
-                tableImage.style.margin = "0 auto";
+                tableImage.src = "https://i.imgur.com/pmqSChJ.png";
+                tableImage.alt = "桌圖載入中";
+                tableImage.classList += "tableImage";
                 const imageDiv = document.createElement("div");
                 imageDiv.appendChild(tableImage);
                 imageDiv.id = "table_image";
-                imageDiv.classList += "img text-center";
+                imageDiv.classList += "img text-center css_center";
                 newDiv.appendChild(imageDiv);
                 resultDiv.appendChild(newDiv);
                 function createMarker(x, y, divName) {
@@ -227,13 +248,9 @@ function fetchSearchTable_Num(value, borter = null) {
 
 
 function search(event) {
-    document.getElementById("result").innerHTML = "";
-    document.getElementById("user_input_display").innerHTML = "";
+    clear();
     if (searchElement.value === "" || searchElement.value === " ") {
-        let predictresult = document.getElementById("predict_result");
-        let predict = document.getElementById("predict");
-        predictresult.innerHTML = "";
-        predict.style.display = "none";
+        return;
     }
     else {
         if (event.inputType != 'deleteContentBackward' && event.inputType != 'deleteCompositionText') {
@@ -242,18 +259,40 @@ function search(event) {
                 for (j in SignalController[i])
                     SignalController[i][j].abort();
 
-
             SignalController = new Array();
             SignalController.push([new AbortController(), new AbortController()]);
             console.log(SignalController);
             aborter1 = SignalController[SignalController.length - 1][0];
             aborter2 = SignalController[SignalController.length - 1][1];
 
-            resultList = [];
             fetchSearchTable_Num(searchElement.value, aborter = aborter1);
             fetchSearchResult(['table_num', 'table_owner', 'name'], [searchElement.value, searchElement.value, searchElement.value], [1, 1, 1], aborter = aborter2);
         }
     }
+}
+
+function click_predict_selection(id, value) {
+    console.log(id);
+    console.log(value);
+    clear();
+    fetchSearchTable_Num(searchElement.value, aborter = aborter1);
+    fetchSearchResult(['_id'], [id], [0], aborter = aborter2);
+    specific_value = value;
+}
+
+
+function clear() {
+    user_input_display.innerHTML = "";
+    predictresult.innerHTML = "";
+    predict.style.display = "none";
+    resultDiv.innerHTML = "";
+    search_result = [];
+    resultList = [];
+    specific_value = 0;
+}
+
+function hasChinese(str) {
+    return /[\u4E00-\u9FA5]+/g.test(str)
 }
 
 searchElement.addEventListener('input', (event) => search(event));
