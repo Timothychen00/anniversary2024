@@ -29,6 +29,10 @@ class customer_manage(Resource):
         
         # ic({key:value})
         # ic(ambiguous)
+        # key,key
+        # key={key+key},{key+key}
+        # value={value+value}
+        # 
         result=Customers.search(key,value,ambiguous,mask)
         return result,200
     

@@ -4,15 +4,14 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flask = "*"
 flask-restful = "*"
-flask-restful-swagger = "*"
 icecream = "*"
 pandas = "*"
 python-dotenv = "*"
 pymongo = "*"
 openpyxl = "*"
 gunicorn = "*"
+locust = "*"
 
 [dev-packages]
 
