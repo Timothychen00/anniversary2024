@@ -17,7 +17,7 @@ class customer_manage(Resource):
         value=data.get('value',None)
         ambiguous=data.get('ambiguous',None)
         mask=data.get('mask',None)
-        specific=data.get('specific',None)
+        specific=int(data.get('specific',None))
         # ic(data)
         if mask and key and value:
             mask=list(map(str,mask.split(',')))
