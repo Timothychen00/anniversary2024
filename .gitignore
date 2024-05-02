@@ -161,3 +161,7 @@ cython_debug/
 #.idea/
 Pipfile
 Pipfile.lock
+a.html
+mango.py
+static/.DS_Store
+test.html

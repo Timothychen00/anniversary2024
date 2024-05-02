@@ -302,3 +302,15 @@ input {
 .select_style {
     height: 50px;
 }
+
+.css_center {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tableImage {
+    width: 350px;
+    height: 350px;
+    display: block;
+    margin: 0 auto;
+}
