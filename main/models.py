@@ -140,7 +140,7 @@ class Customers():
     def add(data):
         template={
             '_id':db_model.next_id(),
-            'name'  : 'test',
+            'name'  : '',
             'year' : '',
             'eat':'',
             'table_num':"",

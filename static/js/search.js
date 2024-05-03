@@ -110,7 +110,7 @@ function fetchSearchResult(key, value, ambiguous, borter = null) {
                         title = "桌長";
                     }
                     else if (resultList[i].key === 'name') {
-                        title = "貴賓";
+                        title = "賓客";
                     }
 
                     let table_num;
